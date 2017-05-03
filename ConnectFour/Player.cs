@@ -8,10 +8,10 @@ namespace ConnectFour
 {
     public class Player
     {
-        private PlayerColor color;
+        public PlayerColor Color { get; private set; }
         public Player(PlayerColor color)
         {
-            this.color = color;
+            this.Color = color;
         }
 
         public bool PlaceDisc(int column)

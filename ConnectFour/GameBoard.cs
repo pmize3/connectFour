@@ -38,17 +38,17 @@ namespace ConnectFour
         /// </summary>
         /// <remarks>
         /// The method will iterate thru the columns from bottom to top (0 - max)
-        /// until it finds a cell it can occupy. If it can't find one, it returns false.
+        /// until it finds a cell it can occupy. If it can't find one, it returns null.
         /// </remarks>
         /// <param name="player">The player that drops the piece.</param>
         /// <param name="column">The column the piece is dropped.</param>
-        /// <returns>True if the drop was successful; otherwise, false.</returns>
-        public bool DropInColumn(Player player, int column)
+        /// <returns>The GridCell that was occupied if the drop was successful; otherwise, null.</returns>
+        public GridCell DropInColumn(Player player, int column)
         {
             // check params
             if (column >= this.ColumnCount || column < 0 || player == null)
             {
-                return false;
+                return null;
             }
 
             var columnCells = Cells[column];
@@ -58,11 +58,11 @@ namespace ConnectFour
                 // if successful
                 if (columnCells[i].OccupyCell(player))
                 {
-                    return true;
+                    return columnCells[i];
                 }
             }
 
-            return false;
+            return null;
         }
 
         /// <summary>
@@ -74,11 +74,11 @@ namespace ConnectFour
         /// Tie (if game has ended in a tie), or Victory
         /// (if the player of the cell won).
         /// </returns>
-        public VictoryCondition CheckVictory(GridCell startingCell)
+        public TurnResult CheckVictory(GridCell startingCell)
         {
             if (startingCell == null || startingCell.OccupyingPlayer == null)
             {
-                return VictoryCondition.None;
+                return TurnResult.Next;
             }
             
             // check surrounding cells and traverse
@@ -86,7 +86,7 @@ namespace ConnectFour
             {
                 if (GetConnectLength(startingCell, (CellLocation)i) >= victoryLength - 1)
                 {
-                    return VictoryCondition.Victory;
+                    return TurnResult.Victory;
                 }
             }
 
@@ -97,12 +97,12 @@ namespace ConnectFour
                 {
                     if (cell.OccupyingPlayer == null)
                     {
-                        return VictoryCondition.None;
+                        return TurnResult.Next;
                     }
                 }
             }
 
-            return VictoryCondition.Tie;
+            return TurnResult.Tie;
         }
 
         /// <summary>
@@ -147,13 +147,46 @@ namespace ConnectFour
         }
 
         /// <summary>
-        /// The possible victory conditions
+        /// Gets a string representation of the board.
         /// </summary>
-        public enum VictoryCondition
+        /// <returns>A string representation of the board.</returns>
+        public string DrawBoard()
         {
-            None,
-            Victory,
-            Tie
+            string str = string.Empty;
+            for(int y = RowCount - 1; y >= 0; y--)
+            {
+                for (int x = 0; x < ColumnCount; x++)
+                {
+                    var cellStr = "O";
+                    var cell = Cells[x][y];
+                    switch (cell.OccupyingPlayer?.Color)
+                    {
+                        case PlayerColor.Red:
+                            cellStr = "R";
+                            break;
+
+                        case PlayerColor.Yellow:
+                            cellStr = "Y";
+                            break;
+                    }
+
+                    str += "\t" + cellStr;
+                }
+                str += "\n";
+            }
+
+            return str;
         }
+    }
+
+    /// <summary>
+    /// The possible end of turn conditions
+    /// </summary>
+    public enum TurnResult
+    {
+        Next,
+        Victory,
+        Tie,
+        Invalid
     }
 }

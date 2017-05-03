@@ -22,13 +22,14 @@ namespace ConnectFourTest
         {
             var player = new Player(PlayerColor.Red);
             var result = board.DropInColumn(player, 1);
-            Assert.IsTrue(result);
+            Assert.IsNotNull(result);
 
             // check cell
             var cell = board.Cells[1][0];
             Assert.IsNotNull(cell);
             Assert.IsNotNull(cell.OccupyingPlayer);
             Assert.AreEqual(cell.OccupyingPlayer, player);
+            Assert.AreEqual(cell, result);
         }
 
         [TestMethod]
@@ -36,16 +37,16 @@ namespace ConnectFourTest
         {
             var player = new Player(PlayerColor.Red);
 
-            bool result = false;
+            GridCell result = null;
             for (int i = 0; i < rowCount; i++)
             {
                 result = board.DropInColumn(player, 0);
-                Assert.IsTrue(result);
+                Assert.IsNotNull(result);
             }
 
             // drop again and it should fail
             result = board.DropInColumn(player, 0);
-            Assert.IsFalse(result);
+            Assert.IsNull(result);
         }
 
         [TestMethod]
@@ -64,18 +65,18 @@ namespace ConnectFourTest
         {
             var player = new Player(PlayerColor.Red);
 
-            bool result = false;
+            GridCell result = null;
             for (int i = 0; i < 4; i++)
             {
                 result = board.DropInColumn(player, i);
-                Assert.IsTrue(result);
+                Assert.IsNotNull(result);
             }
 
             var victory = board.CheckVictory(board.Cells[3][0]);
-            Assert.IsTrue(victory == GameBoard.VictoryCondition.Victory);
+            Assert.IsTrue(victory == TurnResult.Victory);
 
             victory = board.CheckVictory(board.Cells[1][0]);
-            Assert.IsTrue(victory == GameBoard.VictoryCondition.Victory);
+            Assert.IsTrue(victory == TurnResult.Victory);
         }
 
         [TestMethod]
@@ -83,15 +84,15 @@ namespace ConnectFourTest
         {
             var player = new Player(PlayerColor.Red);
 
-            bool result = false;
+            GridCell result = null;
             for (int i = 0; i < 4; i++)
             {
                 result = board.DropInColumn(player, 0);
-                Assert.IsTrue(result);
+                Assert.IsNotNull(result);
             }
 
             var victory = board.CheckVictory(board.Cells[0][0]);
-            Assert.IsTrue(victory == GameBoard.VictoryCondition.Victory);
+            Assert.IsTrue(victory == TurnResult.Victory);
         }
 
         [TestMethod]
@@ -100,21 +101,21 @@ namespace ConnectFourTest
             var player = new Player(PlayerColor.Red);
             var player2 = new Player(PlayerColor.Yellow);
 
-            bool result = false;
+            GridCell result = null;
             for (int i = 0; i < 4; i++)
             {
                 for (int j = 0; j < i; j++)
                 {
                     result = board.DropInColumn(player2, i);
-                    Assert.IsTrue(result);
+                    Assert.IsNotNull(result);
                 }
 
                 result = board.DropInColumn(player, i);
-                Assert.IsTrue(result);
+                Assert.IsNotNull(result);
             }
 
             var victory = board.CheckVictory(board.Cells[0][0]);
-            Assert.IsTrue(victory == GameBoard.VictoryCondition.Victory);
+            Assert.IsTrue(victory == TurnResult.Victory);
         }
 
         [TestMethod]
@@ -122,15 +123,15 @@ namespace ConnectFourTest
         {
             var player = new Player(PlayerColor.Red);
 
-            bool result = false;
+            GridCell result = null;
             for (int i = 0; i < 3; i++)
             {
                 result = board.DropInColumn(player, i);
-                Assert.IsTrue(result);
+                Assert.IsNotNull(result);
             }
 
             var victory = board.CheckVictory(board.Cells[3][0]);
-            Assert.IsTrue(victory == GameBoard.VictoryCondition.None);
+            Assert.IsTrue(victory == TurnResult.Next);
         }
 
         [TestMethod]
@@ -138,15 +139,15 @@ namespace ConnectFourTest
         {
             var player = new Player(PlayerColor.Red);
 
-            bool result = false;
+            GridCell result = null;
             for (int i = 0; i < 3; i++)
             {
                 result = board.DropInColumn(player, i);
-                Assert.IsTrue(result);
+                Assert.IsNotNull(result);
             }
 
             var victory = board.CheckVictory(board.Cells[0][0]);
-            Assert.IsTrue(victory == GameBoard.VictoryCondition.None);
+            Assert.IsTrue(victory == TurnResult.Next);
         }
 
         [TestMethod]
@@ -155,7 +156,7 @@ namespace ConnectFourTest
             var player = new Player(PlayerColor.Red);
             var player2 = new Player(PlayerColor.Yellow);
 
-            bool result = false;
+            GridCell result = null;
             for (int i = 0; i < columnCount; i++)
             {
                 var evenPlayer = (i % 2 == 1) ? player : player2;
@@ -169,10 +170,10 @@ namespace ConnectFourTest
                     }
 
                     result = board.DropInColumn(tempPlayer, i);
-                    Assert.IsTrue(result);
+                    Assert.IsNotNull(result);
 
                     result = board.DropInColumn(tempPlayer, i);
-                    Assert.IsTrue(result);
+                    Assert.IsNotNull(result);
 
                     // extra increment since we added an extra time
                     j++;
@@ -184,7 +185,7 @@ namespace ConnectFourTest
                 foreach (var cell in row)
                 {
                     var victory = board.CheckVictory(cell);
-                    Assert.IsTrue(victory == GameBoard.VictoryCondition.Tie);
+                    Assert.IsTrue(victory == TurnResult.Tie);
                 }
             }
         }
