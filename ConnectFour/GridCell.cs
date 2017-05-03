@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ConnectFour
+﻿namespace ConnectFour
 {
     public class GridCell
     {
@@ -31,7 +25,7 @@ namespace ConnectFour
         /// </summary>
         /// <param name="location">The neighbor location.</param>
         /// <returns>The grid cell neighbor if it exists; otherwise null.</returns>
-        private GridCell GetNeighbor(CellLocation location)
+        public GridCell GetNeighbor(CellLocation location)
         {
             var x = this.X;
             var y = this.Y;
@@ -82,70 +76,7 @@ namespace ConnectFour
 
             return this.board.Cells[x][y];
         }
-
-        /// <summary>
-        /// Gets the cell to the left if one exists.
-        /// </summary>
-        public GridCell LeftCell
-        {
-            get { return GetNeighbor(CellLocation.Left); }
-        }
-
-        /// <summary>
-        /// Gets the cell to the right if one exists.
-        /// </summary>
-        public GridCell RightCell
-        {
-            get { return GetNeighbor(CellLocation.Right); }
-        }
-
-        /// <summary>
-        /// Gets the cell above if one exists.
-        /// </summary>
-        public GridCell AboveCell
-        {
-            get { return GetNeighbor(CellLocation.Above); }
-        }
-
-        /// <summary>
-        /// Gets the cell below if one exists.
-        /// </summary>
-        public GridCell BelowCell
-        {
-            get { return GetNeighbor(CellLocation.Below); }
-        }
-
-        /// <summary>
-        /// Gets the cell above and to the left if one exists.
-        /// </summary>
-        public GridCell AboveLeft
-        {
-            get { return GetNeighbor(CellLocation.AboveLeft); }
-        }
-
-        /// <summary>
-        /// Gets the cell above and to the right if one exists.
-        /// </summary>
-        public GridCell AboveRight
-        {
-            get { return GetNeighbor(CellLocation.AboveRight); }
-        }
-
-        /// <summary>
-        /// Gets the cell below and to the left if one exists.
-        /// </summary>
-        public GridCell BelowLeft
-        {
-            get { return GetNeighbor(CellLocation.BelowLeft); }
-        }
-
-        /// <summary>
-        /// Gets the cell below and to the right if one exists.
-        /// </summary>
-        public GridCell BelowRight {
-            get { return GetNeighbor(CellLocation.BelowRight); }
-        }
-        
+                
         /// <summary>
         /// Attempts to put the player's marker in the cell.
         /// </summary>
@@ -166,20 +97,20 @@ namespace ConnectFour
                 return false;
             }
         }
+    }
 
-        /// <summary>
-        /// The neighboring cell locations.
-        /// </summary>
-        public enum CellLocation
-        {
-            Left,
-            Right,
-            Above,
-            Below,
-            AboveLeft,
-            AboveRight,
-            BelowLeft,
-            BelowRight
-        }
+    /// <summary>
+    /// The neighboring cell locations.
+    /// </summary>
+    public enum CellLocation
+    {
+        Left,
+        AboveLeft,
+        Above,
+        AboveRight,
+        Right,
+        BelowRight,
+        Below,
+        BelowLeft
     }
 }

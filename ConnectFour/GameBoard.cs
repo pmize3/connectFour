@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ConnectFour
 {
@@ -15,6 +11,7 @@ namespace ConnectFour
         public GridCell[][] Cells { get; private set; }
         public int RowCount { get; private set; }
         public int ColumnCount { get; private set; }
+        private int victoryLength = 4;
 
         /// <summary>
         /// Intializes a new instance of the <see cref="GameBoard"/> class.
@@ -79,17 +76,74 @@ namespace ConnectFour
         /// </returns>
         public VictoryCondition CheckVictory(GridCell startingCell)
         {
-            VictoryCondition victory = VictoryCondition.None;
-
-            if (startingCell == null) return victory;
-
-            var startingX = startingCell.X;
-            var startingY = startingCell.Y;
-            var player = startingCell.OccupyingPlayer;
-
+            if (startingCell == null || startingCell.OccupyingPlayer == null)
+            {
+                return VictoryCondition.None;
+            }
+            
             // check surrounding cells and traverse
+            for (int i = 0; i < Enum.GetValues(typeof(CellLocation)).Length; i++)
+            {
+                if (GetConnectLength(startingCell, (CellLocation)i) >= victoryLength - 1)
+                {
+                    return VictoryCondition.Victory;
+                }
+            }
 
-            return victory;
+            // check that we can still play
+            foreach (var row in Cells)
+            {
+                foreach(var cell in row)
+                {
+                    if (cell.OccupyingPlayer == null)
+                    {
+                        return VictoryCondition.None;
+                    }
+                }
+            }
+
+            return VictoryCondition.Tie;
+        }
+
+        /// <summary>
+        /// Iterates through neighboring cells to determine if there are any connect fours
+        /// from the starting cell along the plane of the location specified.
+        /// </summary>
+        /// <param name="startingCell">The cell to start searching for connects.</param>
+        /// <param name="location">The location/direction to look.</param>
+        /// <returns>The length of the connections in that location plane.</returns>
+        public int GetConnectLength(GridCell startingCell, CellLocation location)
+        {
+            var length = 0;
+            var player = startingCell.OccupyingPlayer;
+            var direction = location;
+            var reverseDirection = (CellLocation)(((int)location + 4) % 8);
+
+            // check first direction
+            var firstMostCell = startingCell;
+            while(firstMostCell.GetNeighbor(direction)?.OccupyingPlayer == player)
+            {
+                firstMostCell = firstMostCell.GetNeighbor(direction);
+            }
+
+            // check reverse direction
+            var lastMostCell = startingCell;
+            while(lastMostCell.GetNeighbor(reverseDirection)?.OccupyingPlayer == player)
+            {
+                lastMostCell = lastMostCell.GetNeighbor(reverseDirection);
+            }
+
+            // get the connection length
+            length = firstMostCell.X - lastMostCell.X;
+
+            // if we are looking vertically, we have to use Y diff instead of X
+            if (direction == CellLocation.Above || direction == CellLocation.Below)
+            {
+                length = firstMostCell.Y - lastMostCell.Y;
+            }
+
+
+            return Math.Abs(length);
         }
 
         /// <summary>
