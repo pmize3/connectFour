@@ -58,7 +58,7 @@ namespace ConnectFour
                             }
                         }
 
-                        var firstCell = GameBoard.TraverseCells(cell, otherPlayer, direction);
+                        var firstCell = cell.Traverse(otherPlayer, direction);
                         var possiblePlayCell = firstCell.GetNeighbor(direction);
                         if (possiblePlayCell != null && possiblePlayCell.OccupyingPlayer == null && possiblePlayCell.GetNeighbor(CellLocation.Below)?.OccupyingPlayer != null)
                         {
@@ -66,7 +66,7 @@ namespace ConnectFour
                         }
 
                         var reverseDirection = (CellLocation)(((int)direction + 4) % 8);
-                        var lastCell = GameBoard.TraverseCells(cell, otherPlayer, reverseDirection);
+                        var lastCell = cell.Traverse(otherPlayer, reverseDirection);
                         possiblePlayCell = firstCell.GetNeighbor(reverseDirection);
                         if (possiblePlayCell != null && possiblePlayCell.OccupyingPlayer == null && possiblePlayCell.GetNeighbor(CellLocation.Below)?.OccupyingPlayer != null)
                         {

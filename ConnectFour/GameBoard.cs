@@ -154,10 +154,10 @@ namespace ConnectFour
             var reverseDirection = (CellLocation)(((int)location + 4) % 8);
 
             // check first direction
-            GridCell firstMostCell = TraverseCells(startingCell, player, direction);
+            GridCell firstMostCell = startingCell.Traverse(player, direction);
 
             // check reverse direction
-            var lastMostCell = TraverseCells(startingCell, player, reverseDirection);
+            var lastMostCell = startingCell.Traverse(player, reverseDirection);
 
             // get the connection length
             length = firstMostCell.X - lastMostCell.X;
@@ -170,24 +170,6 @@ namespace ConnectFour
 
 
             return Math.Abs(length) + 1;
-        }
-
-        /// <summary>
-        /// Traverses the cells in the direction specified. Will stop when the next cell is not occupied by the player.
-        /// </summary>
-        /// <param name="startingCell">The cell to start with.</param>
-        /// <param name="player">The player.</param>
-        /// <param name="direction">The direction to traverse.</param>
-        /// <returns>The furthest player occupied cell that connects to the starting cell.</returns>
-        public static GridCell TraverseCells(GridCell startingCell, Player player, CellLocation direction)
-        {
-            var firstMostCell = startingCell;
-            while (firstMostCell.GetNeighbor(direction)?.OccupyingPlayer == player)
-            {
-                firstMostCell = firstMostCell.GetNeighbor(direction);
-            }
-
-            return firstMostCell;
         }
 
         /// <summary>

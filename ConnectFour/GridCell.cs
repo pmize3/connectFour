@@ -97,6 +97,23 @@
                 return false;
             }
         }
+
+        /// <summary>
+        /// Traverses the cells in the direction specified. Will stop when the next cell is not occupied by the player.
+        /// </summary>
+        /// <param name="player">The player</param>
+        /// <param name="direction">The direction to traverse.</param>
+        /// <returns>The furthest player occupied cell that connects to the starting cell.</returns>
+        public GridCell Traverse(Player player, CellLocation direction)
+        {
+            var nextCell = this.GetNeighbor(direction);
+            if (nextCell?.OccupyingPlayer == player)
+            {
+                return nextCell.Traverse(player, direction);
+            }
+
+            return this;
+        }
     }
 
     /// <summary>
