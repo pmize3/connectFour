@@ -135,6 +135,24 @@ namespace ConnectFourTest
             Assert.IsTrue(column == 2);
         }
 
+        [TestMethod]
+        public void ConnectFour_SimpleAI_Diagonal_Test()
+        {
+            connect4 = new ConnectFour.ConnectFour(true);
+            TurnResult result;
+            var columns = new int[] { 0, 1, 1, 2, 2, 3, 3, 0, 2, 3, 0 };
+            for (int i = 0; i < columns.Length; i++)
+            {
+                result = connect4.PlayTurn(columns[i]);
+                Assert.IsTrue(result == TurnResult.Next);
+            }
+
+            var column = ((SimpleAI)connect4.CurrentPlayer).ChooseColumn(connect4);
+            Assert.IsTrue(column == 3);
+            result = connect4.PlayTurn(column);
+            Assert.IsTrue(result == TurnResult.Next);            
+        }
+
         private PlayerColor FlipPlayer(PlayerColor player)
         {
             PlayerColor flippedPlayer = PlayerColor.Yellow;

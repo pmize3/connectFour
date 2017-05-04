@@ -13,11 +13,6 @@ namespace ConnectFour
         {
             this.Color = color;
         }
-
-        public bool PlaceDisc(int column)
-        {
-            return false;
-        }
     }
 
     public enum PlayerColor
@@ -30,6 +25,11 @@ namespace ConnectFour
     {
         public SimpleAI(PlayerColor color) : base(color) { }
 
+        /// <summary>
+        /// Finds a column to play for the AI. Tries to block winning moves.
+        /// </summary>
+        /// <param name="game">The game.</param>
+        /// <returns>A valid column to place the marker.</returns>
         public int ChooseColumn(ConnectFour game)
         {
             int index = 0;
@@ -69,7 +69,7 @@ namespace ConnectFour
 
                         var reverseDirection = (CellLocation)(((int)direction + 4) % 8);
                         var lastCell = cell.Traverse(otherPlayer, reverseDirection);
-                        possiblePlayCell = firstCell.GetNeighbor(reverseDirection);
+                        possiblePlayCell = lastCell.GetNeighbor(reverseDirection);
                         if (CheckPlacement(possiblePlayCell))
                         {
                             return possiblePlayCell.X;
