@@ -19,7 +19,7 @@ namespace ConnectFourTest
         [TestInitialize]
         public void TestInitialize()
         {
-            connect4 = new ConnectFour.ConnectFour();
+            connect4 = new ConnectFour.ConnectFour(false);
         }
 
         [TestMethod]
@@ -107,6 +107,32 @@ namespace ConnectFourTest
             result = connect4.PlayTurn(columnCount - 1);
 
             Assert.IsTrue(result == TurnResult.Tie);
+        }
+
+        [TestMethod]
+        public void ConnectFour_SimpleAI_Test()
+        {
+            connect4 = new ConnectFour.ConnectFour(true);
+            TurnResult result;
+            for (int i = 0; i < 5; i++)
+            {
+                result = connect4.PlayTurn(i % 2);
+                Assert.IsTrue(result == TurnResult.Next);
+            }
+
+            var column = ((SimpleAI)connect4.CurrentPlayer).ChooseColumn(connect4);
+            Assert.IsTrue(column == 0);
+            result = connect4.PlayTurn(column);
+            Assert.IsTrue(result == TurnResult.Next);
+
+            for (int i = 0; i < 5; i++)
+            {
+                result = connect4.PlayTurn(i % 2 + 2);
+                Assert.IsTrue(result == TurnResult.Next);
+            }
+
+            column = ((SimpleAI)connect4.CurrentPlayer).ChooseColumn(connect4);
+            Assert.IsTrue(column == 2);
         }
 
         private PlayerColor FlipPlayer(PlayerColor player)

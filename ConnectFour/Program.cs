@@ -10,17 +10,32 @@ namespace ConnectFour
     {
         static void Main(string[] args)
         {
-            var game = new ConnectFour();
+            Console.Write($"Enter 0 to play humans. Enter 1 to play the CPU. ");
+            var text = Console.ReadLine();
+            int boolInt = 0;
+            int.TryParse(text, out boolInt);
+            var game = new ConnectFour(boolInt == 1);
 
             var condition = TurnResult.Invalid;
             do
             {
                 condition = TurnResult.Invalid;
-                Console.Write($"Player {game.CurrentPlayer.Color}, it's your turn. Choose a column (1-7)");
-                var column = 0;
-                var columnText = Console.ReadLine();
 
-                var isInt = int.TryParse(columnText, out column);
+                var column = 0;
+                var isInt = false;
+                if (game.CurrentPlayer is SimpleAI)
+                {
+                    column = ((SimpleAI)game.CurrentPlayer).ChooseColumn(game) + 1;
+                    isInt = true;
+                    Console.WriteLine($"Player {game.CurrentPlayer.Color}, chooses column {column}");
+                }
+                else
+                {
+
+                    Console.Write($"Player {game.CurrentPlayer.Color}, it's your turn. Choose a column (1-7)");
+                    var columnText = Console.ReadLine();
+                    isInt = int.TryParse(columnText, out column);
+                }
 
                 if (isInt)
                 {

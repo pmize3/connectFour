@@ -39,6 +39,7 @@ namespace ConnectFour
             {
                 foreach (var cell in column)
                 {
+                    if (cell.OccupyingPlayer == null) continue;
                     if (cell.OccupyingPlayer == this) continue;
 
                     CellLocation direction;
@@ -47,7 +48,8 @@ namespace ConnectFour
                     {
                         if (direction == CellLocation.Above || direction == CellLocation.Below)
                         {
-                            if (board.Cells[index].All(c => c.OccupyingPlayer != null))
+                            var cellAbove = cell.Traverse(otherPlayer, CellLocation.Above).GetNeighbor(CellLocation.Above);
+                            if (cellAbove == null || cellAbove.OccupyingPlayer != null)
                             {
                                 // we can't play in that row move on
                                 continue;
@@ -60,7 +62,7 @@ namespace ConnectFour
 
                         var firstCell = cell.Traverse(otherPlayer, direction);
                         var possiblePlayCell = firstCell.GetNeighbor(direction);
-                        if (possiblePlayCell != null && possiblePlayCell.OccupyingPlayer == null && possiblePlayCell.GetNeighbor(CellLocation.Below)?.OccupyingPlayer != null)
+                        if (CheckPlacement(possiblePlayCell))
                         {
                             return possiblePlayCell.X;
                         }
@@ -68,7 +70,7 @@ namespace ConnectFour
                         var reverseDirection = (CellLocation)(((int)direction + 4) % 8);
                         var lastCell = cell.Traverse(otherPlayer, reverseDirection);
                         possiblePlayCell = firstCell.GetNeighbor(reverseDirection);
-                        if (possiblePlayCell != null && possiblePlayCell.OccupyingPlayer == null && possiblePlayCell.GetNeighbor(CellLocation.Below)?.OccupyingPlayer != null)
+                        if (CheckPlacement(possiblePlayCell))
                         {
                             return possiblePlayCell.X;
                         }
@@ -77,14 +79,36 @@ namespace ConnectFour
             }
 
             // otherwise just be random
-            var rand = new Random(board.ColumnCount);
-            index = rand.Next();
+            var rand = new Random();
+            index = rand.Next() % board.ColumnCount;
             while (board.Cells[index].All(c => c.OccupyingPlayer != null))
             {
-                index = rand.Next();
+                index = rand.Next() % board.ColumnCount;
+
             }
 
             return index;
+        }
+
+        /// <summary>
+        /// Checks placement to see if it is a reasonable play.
+        /// </summary>
+        /// <remarks>
+        /// Used for AI blocking player's winning move.
+        /// </remarks>
+        /// <param name="cell">The cell to play in.</param>
+        /// <returns>True if reasonable; otherwise, false/</returns>
+        private static bool CheckPlacement(GridCell cell)
+        {
+            if (cell != null && cell.OccupyingPlayer == null)
+            {
+                var possibleBelowCell = cell.GetNeighbor(CellLocation.Below);
+                if (possibleBelowCell == null || possibleBelowCell.OccupyingPlayer != null)
+                {
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }

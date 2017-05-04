@@ -19,17 +19,19 @@ namespace ConnectFour
         /// <summary>
         /// Initializes a new instance of the <see cref="ConnectFour"/> class.
         /// </summary>
-        public ConnectFour()
+        public ConnectFour(bool playCPU)
         {
             turn = 0;
             Board = new GameBoard(6, 7);
             CurrentPlayer = playerYellow = new Player(PlayerColor.Yellow);
-            playerRed = new Player(PlayerColor.Red);
-        }
-
-        public ConnectFour(bool playCPU) : base()
-        {
-            playerRed = new SimpleAI(PlayerColor.Red);
+            if (playCPU)
+            {
+                playerRed = new SimpleAI(PlayerColor.Red);
+            }
+            else
+            {
+                playerRed = new Player(PlayerColor.Red);
+            }
         }
 
         /// <summary>
