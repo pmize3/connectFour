@@ -60,51 +60,64 @@ namespace ConnectFourTest
             Assert.IsTrue(result == TurnResult.Victory);
         }
 
-        //[TestMethod]
-        //public void ConnectFour_PlayTurn_Tie_Test()
-        //{
-        //    var result = TurnResult.Invalid;
+        [TestMethod]
+        public void ConnectFour_PlayTurn_Tie_Test()
+        {
+            var result = TurnResult.Invalid;
 
-        //    var column = 0;
-        //    var row = 0;
-        //    var evenPlayer = PlayerColor.Red;
-        //    while (column < columnCount - 1)
-        //    {
-        //        var index = column;
-        //        if (evenPlayer != connect4.CurrentPlayer.Color)
-        //        {
-        //            index++;
-        //        }
+            var column = 0;
+            var row = 0;
+            var evenPlayer = PlayerColor.Red;
+            while (column < columnCount - 1)
+            {
+                var index = column;
+                if (evenPlayer != connect4.CurrentPlayer.Color)
+                {
+                    index++;
+                }
 
-        //        result = connect4.PlayTurn(index);
+                result = connect4.PlayTurn(index);
 
-        //        Assert.IsFalse(result == TurnResult.Victory);
+                Assert.IsFalse(result == TurnResult.Victory);
 
-        //        if (result != TurnResult.Invalid)
-        //        {
-        //            // increment row, successful drop
-        //            row++;
-        //            if (row % 4 == 0)
-        //            {
-        //                if (evenPlayer == PlayerColor.Red)
-        //                {
-        //                    evenPlayer = PlayerColor.Yellow;
-        //                }
-        //                else
-        //                {
-        //                    evenPlayer = PlayerColor.Red;
-        //                }
-        //            }
-        //        }
-        //        else
-        //        {
-        //            // move to next column and reset
-        //            column += 2;
-        //            row = 0;
-        //        }
-        //    }
+                if (result != TurnResult.Invalid)
+                {
+                    // increment row, successful drop
+                    row++;
+                    if (row % 4 == 0)
+                    {
+                        evenPlayer = FlipPlayer(evenPlayer);
+                    }
+                }
+                else
+                {
+                    // move to next column and reset
+                    column += 2;
+                    row = 0;
+                    evenPlayer = FlipPlayer(evenPlayer);
+                }
+            }
 
-        //    Assert.IsTrue(result == TurnResult.Tie);
-        //}
+            // play last column
+            for (int i = 0; i < rowCount - 1; i++)
+            {
+                result = connect4.PlayTurn(columnCount - 1);
+            }
+
+            result = connect4.PlayTurn(columnCount - 1);
+
+            Assert.IsTrue(result == TurnResult.Tie);
+        }
+
+        private PlayerColor FlipPlayer(PlayerColor player)
+        {
+            PlayerColor flippedPlayer = PlayerColor.Yellow;
+            if (player != PlayerColor.Red)
+            {
+                flippedPlayer = PlayerColor.Red;
+            }
+
+            return flippedPlayer;
+        }
     }
 }
