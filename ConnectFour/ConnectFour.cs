@@ -11,10 +11,9 @@ namespace ConnectFour
     /// </summary>
     public class ConnectFour
     {
-        private GameBoard board;
-        private Player playerYellow;
-        private Player playerRed;
-        private Player currentPlayer;
+        public GameBoard Board { get; private set; }
+        public Player playerYellow { get; private set; }
+        public Player playerRed { get; private set; }
         private int turn;
 
         /// <summary>
@@ -23,15 +22,20 @@ namespace ConnectFour
         public ConnectFour()
         {
             turn = 0;
-            board = new GameBoard(6, 7);
-            currentPlayer = playerYellow = new Player(PlayerColor.Yellow);
+            Board = new GameBoard(6, 7);
+            CurrentPlayer = playerYellow = new Player(PlayerColor.Yellow);
             playerRed = new Player(PlayerColor.Red);
+        }
+
+        public ConnectFour(bool playCPU) : base()
+        {
+            playerRed = new SimpleAI(PlayerColor.Red);
         }
 
         /// <summary>
         /// Gets the current player of this turn
         /// </summary>
-        public Player CurrentPlayer { get { return currentPlayer; } }
+        public Player CurrentPlayer { get; private set; }
 
         /// <summary>
         /// Plays the turn of the current player.
@@ -45,7 +49,7 @@ namespace ConnectFour
         /// </returns>
         public TurnResult PlayTurn(int column)
         {
-            var cell = board.DropInColumn(currentPlayer, column);
+            var cell = Board.DropInColumn(CurrentPlayer, column);
 
             // placement was invalid
             if (cell == null)
@@ -54,7 +58,7 @@ namespace ConnectFour
             }
 
             // check victory
-            var condition = board.CheckVictory(cell);
+            var condition = Board.CheckVictory(cell);
 
             // if result was not next (victory or tie), return result
             if (condition != TurnResult.Next)
@@ -64,7 +68,7 @@ namespace ConnectFour
 
             // increment turn, switch players and return that it was a valid move
             turn++;
-            currentPlayer = (turn % 2 == 1) ? playerRed : playerYellow;
+            CurrentPlayer = (turn % 2 == 1) ? playerRed : playerYellow;
             return TurnResult.Next;
         }
 
@@ -74,7 +78,7 @@ namespace ConnectFour
         /// <returns>A string representation of the game board.</returns>
         public string ViewBoard()
         {
-            return board.DrawBoard();
+            return Board.DrawBoard();
         }
     }
 }

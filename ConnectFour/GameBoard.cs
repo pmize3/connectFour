@@ -81,13 +81,10 @@ namespace ConnectFour
                 return TurnResult.Next;
             }
             
-            // check surrounding cells and traverse
-            for (int i = 0; i < Enum.GetValues(typeof(CellLocation)).Length; i++)
+            // check surrounding cells
+            if (GetLongestConnectLength(startingCell) >= victoryLength)
             {
-                if (GetConnectLength(startingCell, (CellLocation)i) >= victoryLength - 1)
-                {
-                    return TurnResult.Victory;
-                }
+                return TurnResult.Victory;
             }
 
             // check that we can still play
@@ -106,6 +103,43 @@ namespace ConnectFour
         }
 
         /// <summary>
+        /// Gets the longest connect length for the current cell.
+        /// </summary>
+        /// <param name="startingCell">The cell to start</param>
+        /// <param name="direction">The initial direction to traverse.</param>
+        /// <returns>The longest connect length.</returns>
+        public int GetLongestConnectLength(GridCell startingCell, out CellLocation direction)
+        {
+            var maxDirections = Enum.GetValues(typeof(CellLocation)).Length;
+            var maxLength = 0;
+            direction = default(CellLocation);
+
+            // check surrounding cells and traverse
+            for (int i = 0; i < maxDirections; i++)
+            {
+                var tempLength = GetConnectLength(startingCell, (CellLocation)i);
+                if (tempLength > maxLength)
+                {
+                    maxLength = tempLength;
+                    direction = (CellLocation)i;
+                }
+            }
+
+            return maxLength;
+        }
+
+        /// <summary>
+        /// Gets the longest connect length for the current cell.
+        /// </summary>
+        /// <param name="startingCell">The cell to start</param>
+        /// <returns>The longest connect length.</returns>
+        public int GetLongestConnectLength(GridCell startingCell)
+        {
+            CellLocation direction;
+            return GetLongestConnectLength(startingCell, out direction);
+        }
+
+        /// <summary>
         /// Iterates through neighboring cells to determine if there are any connect fours
         /// from the starting cell along the plane of the location specified.
         /// </summary>
@@ -120,18 +154,10 @@ namespace ConnectFour
             var reverseDirection = (CellLocation)(((int)location + 4) % 8);
 
             // check first direction
-            var firstMostCell = startingCell;
-            while(firstMostCell.GetNeighbor(direction)?.OccupyingPlayer == player)
-            {
-                firstMostCell = firstMostCell.GetNeighbor(direction);
-            }
+            GridCell firstMostCell = TraverseCells(startingCell, player, direction);
 
             // check reverse direction
-            var lastMostCell = startingCell;
-            while(lastMostCell.GetNeighbor(reverseDirection)?.OccupyingPlayer == player)
-            {
-                lastMostCell = lastMostCell.GetNeighbor(reverseDirection);
-            }
+            var lastMostCell = TraverseCells(startingCell, player, reverseDirection);
 
             // get the connection length
             length = firstMostCell.X - lastMostCell.X;
@@ -143,7 +169,25 @@ namespace ConnectFour
             }
 
 
-            return Math.Abs(length);
+            return Math.Abs(length) + 1;
+        }
+
+        /// <summary>
+        /// Traverses the cells in the direction specified. Will stop when the next cell is not occupied by the player.
+        /// </summary>
+        /// <param name="startingCell">The cell to start with.</param>
+        /// <param name="player">The player.</param>
+        /// <param name="direction">The direction to traverse.</param>
+        /// <returns>The furthest player occupied cell that connects to the starting cell.</returns>
+        public static GridCell TraverseCells(GridCell startingCell, Player player, CellLocation direction)
+        {
+            var firstMostCell = startingCell;
+            while (firstMostCell.GetNeighbor(direction)?.OccupyingPlayer == player)
+            {
+                firstMostCell = firstMostCell.GetNeighbor(direction);
+            }
+
+            return firstMostCell;
         }
 
         /// <summary>
